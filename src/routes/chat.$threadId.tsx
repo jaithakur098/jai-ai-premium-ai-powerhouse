@@ -369,16 +369,22 @@ function ChatWindow({
       <div className="sticky bottom-0 border-t border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto w-full max-w-3xl p-3 sm:p-4">
           <PromptInput
-            onSubmit={(_msg, e) => { e.preventDefault(); void handleSubmit(); }}
+            onSubmit={(msg, e) => {
+              e.preventDefault();
+              const text = (msg.text ?? input).trim();
+              if (!text || status === "streaming" || status === "submitted") return;
+              setInput("");
+              void sendMessage({ text });
+            }}
             className="glass-strong rounded-2xl"
           >
             <PromptInputTextarea
-              ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask JAI AI anything…"
               className="min-h-[56px] !bg-transparent !border-0 px-4 py-3 text-sm placeholder:text-muted-foreground focus-visible:!ring-0"
             />
+
             <PromptInputFooter className="justify-between gap-2 px-3 pb-3">
               <div className="flex gap-1">
                 <input
