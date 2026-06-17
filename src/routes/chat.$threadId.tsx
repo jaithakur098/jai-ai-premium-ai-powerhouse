@@ -250,10 +250,10 @@ function ChatWindow({
     onPersist(messages);
   }, [messages, status, onPersist]);
 
-  // Focus textarea on mount + after sends
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  // Focus textarea on mount + after sends (best-effort)
   useEffect(() => {
-    textareaRef.current?.focus();
+    const ta = document.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
+    ta?.focus();
   }, [threadId, status]);
 
   const [input, setInput] = useState("");
@@ -261,16 +261,10 @@ function ChatWindow({
   const recognitionRef = useRef<any>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const handleSubmit = useCallback(async () => {
-    const text = input.trim();
-    if (!text || status === "streaming" || status === "submitted") return;
-    setInput("");
-    await sendMessage({ text });
-  }, [input, sendMessage, status]);
-
   const handleSuggestion = (text: string) => {
     void sendMessage({ text });
   };
+
 
   const handleVoice = () => {
     const W = window as any;
